@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9A6C0D3F-94AA-482B-86E2-08422426D56E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CSA2CS</RootNamespace>
+    <AssemblyName>CSA2CS</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;JSONNET_XMLDISABLE;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>True</Externalconsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>True</Externalconsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="AssemblyFabricParser.cs" />
+    <Compile Include="AssemblyLoader.cs" />
+    <Compile Include="Assert.cs" />
+    <Compile Include="Consts.cs" />
+    <Compile Include="DumpContext.cs" />
+    <Compile Include="DumperIO.cs" />
+    <Compile Include="DumperToolbox.cs" />
+    <Compile Include="FieldDumper.cs" />
+    <Compile Include="FileCodeDumper.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="Indenter.cs" />
+    <Compile Include="MethodDumper.cs" />
+    <Compile Include="MethodParameterDumper.cs" />
+    <Compile Include="PropertyDumper.cs" />
+    <Compile Include="TypeCodeDumper.cs" />
+    <Compile Include="TypeData.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="TEST.cs" />
+    <Compile Include="SimpleMemoryPool.cs" />
+    <Compile Include="IPoolUser.cs" />
+    <Compile Include="TypeMetaHelper.cs" />
+    <Compile Include="DumpWorker.cs" />
+    <Compile Include="TypeDeclarationDumper.cs" />
+    <Compile Include="PrivacyHelper.cs" />
+    <Compile Include="TraitHelper.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
