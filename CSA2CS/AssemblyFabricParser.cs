@@ -25,6 +25,7 @@ namespace CSA2CS
 				{
 					if (data.Type.IsEnum)
 					{
+						ParseEnum(data);
 					}
 					else
 					{

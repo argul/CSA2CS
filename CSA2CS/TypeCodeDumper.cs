@@ -8,6 +8,7 @@ namespace CSA2CS
 	{
 		public static void Dump(DumpContext ctx)
 		{
+			Assert.AssertIsTrue(ctx.data.IsInited);
 			if (ctx.data.Type.IsPrimitive)
 			{
 				Assert.Error("Attempt to dump primitive type!");
