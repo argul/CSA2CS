@@ -22,6 +22,12 @@ namespace CSA2CS.TEST
 	{
 		public int a;
 		public void Foo() {}
+		public NESTED nested;
+
+		public struct NESTED
+		{
+			public int a;
+		}
 	}
 
 	public class TEST_CONSTS
@@ -70,7 +76,7 @@ namespace CSA2CS.TEST
 
 	public class TEST_PROPERTY
 	{
-		public int A 
+		public static int A 
 		{ 
 			get { return 0; }
 			set { }

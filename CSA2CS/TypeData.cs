@@ -73,10 +73,12 @@ namespace CSA2CS
 				while (nested.IsNested)
 				{
 					nested = nested.DeclaringType;
-					fullNameStrNoNamespace = nested.Name + "." + fullNameStrNoNamespace;
+					fullNameStrNoNamespace = TypeMetaHelper.GetTypeDeclarationName(nested) + "." + fullNameStrNoNamespace;
 				}
 			}
 			fullNameStr = String.IsNullOrEmpty(namespaceStr) ? fullNameStrNoNamespace : (namespaceStr + "." + fullNameStrNoNamespace);
+
+			Debug.Log("Init TypeData : " + type.Name + " ==> " + fullNameStr, Debug.DEBUG_LEVEL_LOG);
 
 			isInited = true;
 		}

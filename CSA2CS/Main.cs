@@ -15,7 +15,7 @@ namespace CSA2CS
 			int debugLevel = 0;
 			if (args.Length >= 3 && int.TryParse(args[2], out debugLevel))
 			{
-				Global.DEBUG_LEVEL = debugLevel;
+				Debug.DEBUG_LEVEL = debugLevel;
 			}
 
 			string err = "";

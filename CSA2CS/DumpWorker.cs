@@ -52,16 +52,21 @@ namespace CSA2CS
 				foreach (var e in entries)
 				{
 					var ns = e.Namespace;
-					var content = FileCodeDumper.DumpCode(e);
 					if (String.IsNullOrEmpty(ns))
 					{
-						var fileName = GetFileName(e.Type.Name, ".cs");
+						var fileName = FileCodeDumper.GetFileName(e.Name, ".cs");
+						Debug.Log("Dump Code File : " + e.Type.Name + " ==> " + fileName, Debug.DEBUG_LEVEL_LOG);
+
+						var content = FileCodeDumper.DumpCode(e);
 						DumperIO.WriteFile(GetFilePath(fileName), content);
 					}
 					else
 					{
 						var parts = ns.Split('.');
-						var fileName = GetFileName(e.FullNameNoNamespace, ".cs");
+						var fileName = FileCodeDumper.GetFileName(e.FullNameNoNamespace, ".cs");
+						Debug.Log("Dump Code File : " + e.Type.Name + " ==> " + fileName, Debug.DEBUG_LEVEL_LOG);
+
+						var content = FileCodeDumper.DumpCode(e);
 						DumperIO.WriteFile(GetFilePath(fileName, parts), content);
 					}
 				}
@@ -94,24 +99,6 @@ namespace CSA2CS
 				ret = Path.Combine(ret, fileName);
 				return ret;
 			}
-		}
-
-		private static System.Text.StringBuilder sb = new System.Text.StringBuilder();
-		private string GetFileName(string typeName, string extension = "")
-		{
-			foreach (var c in typeName.ToCharArray())
-			{
-				if (c == '+') sb.Append('_');
-				else if (c == '.') sb.Append('_');
-				else if (c == '<') sb.Append('_');
-				else if (c == ',') sb.Append('_');
-				else if (c == '>' || c == ' ') {}
-				else sb.Append(c);
-			}
-			sb.Append(extension);
-			var ret = sb.ToString();
-			sb.Length = 0;
-			return ret;
 		}
 	}
 }

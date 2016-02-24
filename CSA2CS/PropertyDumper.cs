@@ -43,8 +43,8 @@ namespace CSA2CS
 		
 		private static string Trait(PropertyInfo info)
 		{
-			if (info.CanRead) return MethodDumper.Privacy(info.GetGetMethod(true));
-			else if (info.CanWrite) return MethodDumper.Privacy(info.GetSetMethod(true));
+			if (info.CanRead) return MethodDumper.Trait(info.GetGetMethod(true));
+			else if (info.CanWrite) return MethodDumper.Trait(info.GetSetMethod(true));
 			else Assert.Error("Oops! what is this? " + info.ToString());
 			
 			return "";

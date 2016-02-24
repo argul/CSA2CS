@@ -21,10 +21,22 @@ namespace CSA2CS
 			return IsDelegateType(info.FieldType);
 		}
 
-		/*http://stackoverflow.com/questions/23228075/determine-if-methodinfo-represents-a-lambda-expression*/
-		public static bool IsAnonymousName(string name)
+		public static bool IsAnonymous(System.Type type)
 		{
-			return !System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(name);
+			var attrs = type.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false);
+			return (null != attrs && attrs.Length > 0);
+		}
+
+		public static bool IsAnonymous(FieldInfo info)
+		{
+			var attrs = info.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false);
+			return (null != attrs && attrs.Length > 0);
+		}
+
+		public static bool IsAnonymous(MethodInfo info)
+		{
+			var attrs = info.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false);
+			return (null != attrs && attrs.Length > 0);
 		}
 
 		public static string GetTypeDeclarationName(System.Type type)
@@ -43,24 +55,36 @@ namespace CSA2CS
 			}
 			else
 			{
-				var typeArguments = type.GetGenericArguments();
-				var strArr = new string[typeArguments.Length];
-				for (int i = 0; i < typeArguments.Length; i++)
+				var rawName = type.Name;
+				if (rawName.Contains("`"))
 				{
-					strArr[i] = GetTypeDeclarationName(typeArguments[i]);
+					var typeArguments = type.GetGenericArguments();
+					var strArr = new string[typeArguments.Length];
+					for (int i = 0; i < typeArguments.Length; i++)
+					{
+						strArr[i] = GetTypeDeclarationName(typeArguments[i]);
+					}
+					var ret = type.Name.Remove(type.Name.IndexOf('`')) + "<" + string.Join(", ", strArr) + ">";
+					return ret;
 				}
-				var ret = type.Name.Remove(type.Name.IndexOf('`')) + "<" + string.Join(", ", strArr) + ">";
-				return ret;
+				else
+				{
+					return type.Name;
+				}
 			}
 		}
 
 		public static string GetTypeUsageName(System.Type type, DumpContext ctx)
 		{
-			if (type.IsArray)
+			if (type.IsByRef)
+			{
+				return GetTypeUsageName(type.GetElementType(), ctx);
+			}
+			else if (type.IsArray)
 			{
 				return GetTypeUsageName(type.GetElementType(), ctx) + "[]";
 			}
-			if (type.IsGenericParameter)
+			else if (type.IsGenericParameter)
 			{
 				return type.Name;
 			}
@@ -86,6 +110,12 @@ namespace CSA2CS
 			else
 			{
 				var data = Global.FindTypeData(type);
+				if (null == data)
+				{
+					Debug.DumpTypeFlags(type, Debug.DEBUG_LEVEL_VERBOSE, (pi)=>{
+						return pi.Name.StartsWith("Is");
+					});
+				}
 				Assert.AssertIsTrue(null != data, "Type data not found! : " + type.FullName);
 				Assert.AssertIsTrue(data.IsInited, "Uninited Type : " + type.FullName);
 				if (String.IsNullOrEmpty(ctx.enclosingNamespace) || String.IsNullOrEmpty(data.Namespace))

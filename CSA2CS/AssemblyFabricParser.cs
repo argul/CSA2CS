@@ -14,6 +14,7 @@ namespace CSA2CS
 			foreach (var type in types)
 			{
 				if (type.IsPrimitive) continue;
+				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymous(type)) continue;
 
 				var data = Global.FindTypeData(type);
 				if (null == data) 
@@ -23,14 +24,7 @@ namespace CSA2CS
 				}
 				if (!data.IsInited)
 				{
-					if (data.Type.IsEnum)
-					{
-						ParseEnum(data);
-					}
-					else
-					{
-						ParseTypeFabric(data);
-					}
+					ParseTypeFabric(data);
 				}
 
 				if (!type.IsNested)
@@ -47,14 +41,15 @@ namespace CSA2CS
 		private static List<PropertyInfo> propertyList = new List<PropertyInfo>();
 		private static List<MethodInfo> methodList = new List<MethodInfo>();
 
-		private static void ParseEnum(TypeData data)
-		{
-			data.InitBasic();
-		}
-
 		private static void ParseTypeFabric(TypeData data)
 		{
 			var type = data.Type;
+			if (type.IsEnum)
+			{
+				data.InitBasic();
+				return;
+			}
+
 			var fields = type.GetFields(BindingFlags.DeclaredOnly |
 			                            BindingFlags.Static |
 			                            BindingFlags.Instance | 
@@ -99,10 +94,8 @@ namespace CSA2CS
 			{
 				foreach (var nested in data.NestedTypes)
 				{
-					if (nested.IsInited)
-					{
-						ParseTypeFabric(nested);
-					}
+					if (nested.IsInited) continue;
+					ParseTypeFabric(nested);
 				}
 			}
 		}
@@ -149,7 +142,7 @@ namespace CSA2CS
 			
 			foreach (var fi in fields)
 			{
-				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymousName(fi.Name)) continue;
+				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymous(fi)) continue;
 				if (filter.Invoke(fi)) ret.Add(fi);
 			}
 
@@ -164,7 +157,7 @@ namespace CSA2CS
 			
 			foreach (var nested in nestedTypes)
 			{
-				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymousName(nested.Name)) continue;
+				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymous(nested)) continue;
 				if (TypeMetaHelper.IsDelegateType(nested))
 				{
 					ret.Add(nested);
@@ -181,7 +174,11 @@ namespace CSA2CS
 			
 			foreach (var nested in nestedTypes)
 			{
-				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymousName(nested.Name)) continue;
+				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymous(nested))
+				{
+					Debug.Log("Ignore Anonymous Type : " + nested.Name, Debug.DEBUG_LEVEL_VERBOSE);
+					continue;
+				}
 				if (TypeMetaHelper.IsDelegateType(nested)) continue;
 
 				var data = Global.FindTypeData(nested);
@@ -276,7 +273,7 @@ namespace CSA2CS
 			foreach (var mi in methods)
 			{
 				if (TraitHelper.IsSpecialMethod(mi)) continue;
-				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymousName(mi.Name)) continue;
+				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymous(mi)) continue;
 				if (mi.IsStatic)
 				{
 					ret.Add(mi);
@@ -296,7 +293,7 @@ namespace CSA2CS
 			{
 				if (TraitHelper.IsSpecialMethod(mi)) continue;
 				if (mi.IsStatic) continue;
-				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymousName(mi.Name)) continue;
+				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsAnonymous(mi)) continue;
 
 				ret.Add(mi);
 			}

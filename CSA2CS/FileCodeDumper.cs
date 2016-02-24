@@ -41,6 +41,24 @@ namespace CSA2CS
 			ctx = null;
 			return ret;
 		}
+
+		private static System.Text.StringBuilder sb = new System.Text.StringBuilder();
+		public static string GetFileName(string typeName, string extension = "")
+		{
+			foreach (var c in typeName.ToCharArray())
+			{
+				if (c == '+') sb.Append('_');
+				else if (c == '.') sb.Append('_');
+				else if (c == '<') sb.Append('_');
+				else if (c == ',') sb.Append('_');
+				else if (c == '>' || c == ' ') {}
+				else sb.Append(c);
+			}
+			sb.Append(extension);
+			var ret = sb.ToString();
+			sb.Length = 0;
+			return ret;
+		}
 	}
 }
 
