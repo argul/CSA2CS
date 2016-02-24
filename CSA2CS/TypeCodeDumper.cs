@@ -31,8 +31,16 @@ namespace CSA2CS
 		{
 			ctx.NewLine();
 
-			if (ctx.data.Type.IsPublic) ctx.Push(Consts.KEYWORD_PUBLIC);
-			else if (ctx.data.Type.IsNotPublic) ctx.Push(Consts.KEYWORD_PRIVATE);
+			if (PrivacyHelper.IsPublic(ctx.data.Type))
+				ctx.Push(Consts.KEYWORD_PUBLIC);
+			else if (PrivacyHelper.IsProtectedInternal(ctx.data.Type))
+				ctx.Push(Consts.KEYWORD_PROTECTED + Consts.KEYWORD_INTERNAL);
+			else if (PrivacyHelper.IsProtected(ctx.data.Type))
+				ctx.Push(Consts.KEYWORD_PROTECTED);
+			else if (PrivacyHelper.IsInternal(ctx.data.Type))
+				ctx.Push(Consts.KEYWORD_INTERNAL);
+			else if (PrivacyHelper.IsPrivate(ctx.data.Type))
+				ctx.Push(Consts.KEYWORD_PRIVATE);
 
 			ctx.Push(Consts.KEYWORD_ENUM);
 			ctx.Push(ctx.data.Name);
@@ -90,10 +98,10 @@ namespace CSA2CS
 
 			if (ctx.data.HasNestedType)
 			{
-				ctx.NewLine();
 				var saved = ctx.data;
 				foreach (var tp in ctx.data.NestedTypes)
 				{
+					ctx.NewLine();
 					ctx.data = tp;
 					Dump(ctx);
 				}

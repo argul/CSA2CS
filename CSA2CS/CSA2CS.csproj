@@ -62,6 +62,8 @@
     <Compile Include="TypeDeclarationDumper.cs" />
     <Compile Include="PrivacyHelper.cs" />
     <Compile Include="TraitHelper.cs" />
+    <Compile Include="ValueDumper.cs" />
+    <Compile Include="Debug.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

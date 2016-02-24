@@ -41,8 +41,14 @@ namespace CSA2CS
 		{
 			try
 			{
-				var assemby = AssemblyLoader.LoadAssembly(inputPath);
+				var reference = new System.Collections.Generic.Dictionary<string, Assembly>();
+				var assemby = AssemblyLoader.LoadAssembly(inputPath, ref reference);
+				foreach (var kvp in reference)
+				{
+					AssemblyFabricParser.Parse(kvp.Value);
+				}
 				var entries = AssemblyFabricParser.Parse(assemby);
+
 				foreach (var e in entries)
 				{
 					var ns = e.Namespace;

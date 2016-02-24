@@ -6,12 +6,17 @@ namespace CSA2CS
 	{
 		public static void Main (string[] args)
 		{
-			if (args.Length != 2)
+			if (args.Length < 2)
 			{
 				PrintManual();
 			}
 
 			var worker = new DumpWorker(args[0], args[1]);
+			int debugLevel = 0;
+			if (args.Length >= 3 && int.TryParse(args[2], out debugLevel))
+			{
+				Global.DEBUG_LEVEL = debugLevel;
+			}
 
 			string err = "";
 			if (!worker.CheckProc(out err))

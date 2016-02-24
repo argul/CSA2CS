@@ -6,6 +6,7 @@ namespace CSA2CS
 	public static class Global
 	{
 		public static bool IGNORE_ANONYMOUS = true;
+		public static int DEBUG_LEVEL = -1;
 
 		public static TypeData FindTypeData(System.Type type)
 		{
