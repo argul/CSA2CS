@@ -57,7 +57,20 @@ namespace CSA2CS
 				ctx.builder.Indent(ctx.indentLevel);
 				ctx.Push(names[i]);
 				ctx.Push(" = ");
-				ctx.Push(((int)values.GetValue(i)).ToString());
+
+				var v = values.GetValue(i).ToString();
+				int t1 = 0;
+				long t2 = 0;
+				ulong t3 = 0;
+				if (!Int32.TryParse(v, out t1))
+					ctx.Push(t1.ToString());
+				else if (!Int64.TryParse(v, out t2))
+					ctx.Push(t2.ToString());
+				else if (!UInt64.TryParse(v, out t3))
+					ctx.Push(t3.ToString());
+				else
+					Debug.Log("Unknown Enum Value : " + ctx.data.Name + "." + names[i] + " ==> " + v, Debug.DEBUG_LEVEL_ERROR);
+
 				if (i != len - 1) ctx.Push(',');
 			}
 
@@ -86,6 +99,7 @@ namespace CSA2CS
 
 			DumpConstructors(ctx);
 			DumpFinalizer(ctx);
+			DumpSpecialMethods(ctx);
 			DumpStaticEvents(ctx);
 			DumpStaticProperties(ctx);
 			DumpStaticMethods(ctx);
@@ -141,6 +155,17 @@ namespace CSA2CS
 			ctx.NewLine();
 
 			MethodDumper.DumpFinalizer(ctx);
+		}
+
+		private static void DumpSpecialMethods(DumpContext ctx)
+		{
+			if (!ctx.data.HasSpecialMethods) return;
+			ctx.NewLine();
+
+			foreach (var mi in ctx.data.SpecialMethods)
+			{
+				MethodDumper.DumpSpecialMethod(mi, ctx);
+			}
 		}
 
 		private static void DumpStaticEvents(DumpContext ctx)

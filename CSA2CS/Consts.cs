@@ -30,6 +30,8 @@ namespace CSA2CS
 		public const string KEYWORD_PARAMS = "params ";
 		public const string KEYWORD_DELEGATE = "delegate ";
 		public const string KEYWORD_EVENT = "event ";
+		public const string KEYWORD_NEW = "new ";
+		public const string KEYWORD_THIS = "this ";
 
 		public const string FINALIZER_METHOD_NAME = "Finalize";
 	}

@@ -77,18 +77,19 @@ namespace CSA2CS
 			                              BindingFlags.DeclaredOnly);
 
 			data.InitFull(GetConstants(fields),
-			          GetNestedDelegates(nestedTypes),
-			          GetStaticFields(fields),
-			          GetInstanceFields(fields),
-			          GetConstructors(constructors),
-			          IsExplicitFinalizer(type),
-			          GetStaticProperties(properties),
-			          GetInstanceProperties(properties),
-			          GetStaticMethods(methods),
-			          GetInstanceMethods(methods),
-			          GetStaticEvents(fields),
-			          GetInstanceEvents(fields),
-			          GetNestedTypes(nestedTypes));
+			              GetNestedDelegates(nestedTypes),
+			              GetSpecialMethods(methods),
+			              GetStaticFields(fields),
+			              GetInstanceFields(fields),
+			              GetConstructors(constructors),
+			              IsExplicitFinalizer(type),
+			              GetStaticProperties(properties),
+			              GetInstanceProperties(properties),
+			              GetStaticMethods(methods),
+			              GetInstanceMethods(methods),
+			              GetStaticEvents(fields),
+			              GetInstanceEvents(fields),
+			              GetNestedTypes(nestedTypes));
 
 			if (data.HasNestedType)
 			{
@@ -263,6 +264,21 @@ namespace CSA2CS
 
 			ret.Sort(PropertyInfoComparer);
 			return ret.Count > 0 ? ret.Clone<PropertyInfo>() : null;
+		}
+
+		private static List<MethodInfo> GetSpecialMethods(MethodInfo[] methods)
+		{
+			var ret = methodList;
+			ret.Clear();
+			
+			foreach (var mi in methods)
+			{
+				if (mi.Name == Consts.FINALIZER_METHOD_NAME) continue;
+				if (!TraitHelper.IsSpecialMethod(mi)) continue;
+				ret.Add(mi);
+			}
+
+			return ret.Count > 0 ? ret.Clone<MethodInfo>() : null;
 		}
 
 		private static List<MethodInfo> GetStaticMethods(MethodInfo[] methods)

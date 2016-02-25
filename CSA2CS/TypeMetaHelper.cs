@@ -39,6 +39,12 @@ namespace CSA2CS
 			return (null != attrs && attrs.Length > 0);
 		}
 
+		public static bool IsSugerMethod(MethodInfo info)
+		{
+			// TODO
+			return false;
+		}
+
 		public static string GetTypeDeclarationName(System.Type type)
 		{
 			if (type.IsArray)
@@ -110,12 +116,6 @@ namespace CSA2CS
 			else
 			{
 				var data = Global.FindTypeData(type);
-				if (null == data)
-				{
-					Debug.DumpTypeFlags(type, Debug.DEBUG_LEVEL_VERBOSE, (pi)=>{
-						return pi.Name.StartsWith("Is");
-					});
-				}
 				Assert.AssertIsTrue(null != data, "Type data not found! : " + type.FullName);
 				Assert.AssertIsTrue(data.IsInited, "Uninited Type : " + type.FullName);
 				if (String.IsNullOrEmpty(ctx.enclosingNamespace) || String.IsNullOrEmpty(data.Namespace))

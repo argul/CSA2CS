@@ -54,6 +54,13 @@ namespace CSA2CS
 			if (info.Name == Consts.FINALIZER_METHOD_NAME) return true;
 			return false;
 		}
+
+		// https://msdn.microsoft.com/en-us/library/system.runtime.compilerservices.extensionattribute.aspx
+		public static bool IsExtensionMethod(MethodInfo info)
+		{
+			var attrs = info.GetCustomAttributes(typeof(System.Runtime.CompilerServices.ExtensionAttribute), false);
+			return (null != attrs && attrs.Length > 0);
+		}
 		#endregion
 
 		#region FieldInfo

@@ -5,6 +5,7 @@ namespace CSA2CS
 {
 	public static class Global
 	{
+		public static bool CLEAR_OUTPUT_PATH_IF_EXIST = true;
 		public static bool IGNORE_ANONYMOUS = true;
 		public static bool INTERRUPT_ON_ERROR = false;
 
@@ -37,5 +38,8 @@ namespace CSA2CS
 				return type.Name;
 			}
 		}
+
+		private static SimpleMemoryPool builderPool = new SimpleMemoryPool();
+		public static SimpleMemoryPool BuilderPool { get { return builderPool; } }
 	}
 }

@@ -35,6 +35,7 @@ namespace CSA2CS
 			else if (TraitHelper.IsVirtualNoneOverride(info)) return Consts.KEYWORD_VIRTUAL;
 			else if (TraitHelper.IsOverrideSealed(info)) return Consts.KEYWORD_SEALED + Consts.KEYWORD_OVERRIDE;
 			else if (TraitHelper.IsOverrideNoneSealed(info)) return Consts.KEYWORD_OVERRIDE;
+			// buggy : MethodBase.IsHideBySig always return true in mono env, so TEST_HIDE will fail!
 
 			return "";
 		}
@@ -49,12 +50,15 @@ namespace CSA2CS
 			}
 			ctx.Push(ReturnTypeStr(mi, ctx));
 			ctx.Push(mi.Name);
+			if (mi.IsGenericMethod) DumpGenericTypeArguments(mi, ctx);
 			ctx.Push('(');
+			bool isExtensionMethod = TraitHelper.IsExtensionMethod(mi);
 			
 			List<ParameterInfo> outParams = null;
 			var parameters = mi.GetParameters();
 			for (int i = 0; i < parameters.Length; i++)
 			{
+				if (0 == i && isExtensionMethod) ctx.Push(Consts.KEYWORD_THIS);
 				if (parameters[i].IsOut)
 				{
 					if (null == outParams) outParams = new List<ParameterInfo>();
@@ -107,6 +111,19 @@ namespace CSA2CS
 				
 				ctx.RightBracket();
 			}
+		}
+
+		private static void DumpGenericTypeArguments(MethodInfo mi, DumpContext ctx)
+		{
+			Assert.AssertIsTrue(mi.IsGenericMethod);
+			ctx.Push('<');
+			var args = mi.GetGenericArguments();
+			for (int i = 0; i < args.Length; i++)
+			{
+				ctx.Push(TypeMetaHelper.GetTypeDeclarationName(args[i]));
+				if (i != args.Length - 1) ctx.Push(", ");
+			}
+			ctx.Push('>');
 		}
 
 		public static void DumpConstructor(ConstructorInfo ci, DumpContext ctx)
@@ -173,6 +190,55 @@ namespace CSA2CS
 				return name + " ";
 			}
 		}
+
+		public static void DumpSpecialMethod(MethodInfo info, DumpContext ctx)
+		{
+			Assert.AssertIsTrue(info.IsSpecialName);
+			ctx.NewLine();
+			ctx.Push(info.Name);
+		}
+
+//		private static Dictionary<string, string> overridedOperators = new Dictionary<string, string>()
+//		{
+//			op_Implicit
+//			op_Explicit
+//			op_Addition
+//			op_Subtraction
+//			op_Multiply
+//			op_Division
+//			op_Modulus
+//			op_ExclusiveOr
+//			op_BitwiseAnd
+//			op_BitwiseOr
+//			op_LogicalAnd
+//			op_LogicalOr
+//			op_Assign
+//			op_LeftShift
+//			op_RightShift
+//			op_SignedRightShift
+//			op_UnsignedRightShift
+//			op_Equality
+//			op_GreaterThan
+//			op_LessThan
+//			op_Inequality
+//			op_GreaterThanOrEqual
+//			op_LessThanOrEqual
+//			op_MultiplicationAssignment
+//			op_SubtractionAssignment
+//			op_ExclusiveOrAssignment
+//			op_LeftShiftAssignment
+//			op_ModulusAssignment
+//			op_AdditionAssignment
+//			op_BitwiseAndAssignment
+//			op_BitwiseOrAssignment
+//			op_Comma
+//			op_DivisionAssignment
+//			op_Decrement
+//			op_Increment
+//			op_UnaryNegation
+//			op_UnaryPlus
+//			op_OnesComplement
+//		};
 	}
 }
 

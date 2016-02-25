@@ -26,23 +26,36 @@ namespace CSA2CS
 			}
 		}
 
-		public static void DumpTypeFlags(System.Type type, int debugLevel,
-		                                 System.Predicate<PropertyInfo> flagFilter = null,
-		                                 System.Func<PropertyInfo, object, string> dumper = null)
+		public static void DumpInstanceFlags(object obj, int debugLevel,
+		                                     System.Predicate<PropertyInfo> flagFilter = null,
+		                                     System.Func<PropertyInfo, object, string> dumper = null)
 		{
+			var type = obj.GetType();
 			var properties = type.GetProperties(BindingFlags.Public |
 			                                    BindingFlags.Instance);
 			foreach (var p in properties)
 			{
 				if (null != flagFilter && !flagFilter.Invoke(p)) continue;
+				if (!p.CanRead) continue;
 				var str = "";
+				object value = null;
+				try
+				{
+					value = p.GetValue(obj, new object[0]);
+				}
+				catch (Exception e)
+				{
+					Debug.Log("Get Value Failed : " + p.Name, Debug.DEBUG_LEVEL_ERROR);
+					Debug.Log(e.Message, Debug.DEBUG_LEVEL_ERROR);
+					continue;
+				}
 				if (null != dumper)
 				{
-					str = dumper.Invoke(p, p.GetValue(type, new object[0]));
+					str = dumper.Invoke(p, value);
 				}
 				else
 				{
-					str = (p.Name + " = " + p.GetValue(type, new object[0]));
+					str = (p.Name + " = " + value);
 				}
 				Debug.Log(str, debugLevel);
 			}

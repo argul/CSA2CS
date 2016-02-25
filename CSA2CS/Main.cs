@@ -9,15 +9,38 @@ namespace CSA2CS
 			if (args.Length < 2)
 			{
 				PrintManual();
+				return;
 			}
 
-			var worker = new DumpWorker(args[0], args[1]);
+			ParseArgs(args);
+
+			StartUp();
+
+			PerformDump(args);
+		}
+
+		private static void PrintManual()
+		{
+			Console.WriteLine("TODO : print manual");
+		}
+
+		private static void ParseArgs(string[] args)
+		{
 			int debugLevel = 0;
 			if (args.Length >= 3 && int.TryParse(args[2], out debugLevel))
 			{
 				Debug.DEBUG_LEVEL = debugLevel;
 			}
+		}
 
+		private static void StartUp()
+		{
+			Utils.StartUp();
+		}
+
+		private static void PerformDump(string[] args)
+		{
+			var worker = new DumpWorker(args[0], args[1]);
 			string err = "";
 			if (!worker.CheckProc(out err))
 			{
@@ -27,11 +50,6 @@ namespace CSA2CS
 			{
 				Console.WriteLine("Dump Success!");
 			}
-		}
-
-		private static void PrintManual()
-		{
-			Console.WriteLine("TODO : print manual");
 		}
 	}
 }

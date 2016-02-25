@@ -172,6 +172,7 @@ namespace CSA2CS.TEST
 		public K field;
 		public K Method(T a) { return default(K); }
 		public K Property { get { return default(K); } set { } }
+		public K Method_Generic<V, M, N>(K k, T t) { return default(K); }
 	}
 
 	public class TEST_GENERIC2<S, K> : TEST_GENERIC<K, string>
@@ -179,6 +180,65 @@ namespace CSA2CS.TEST
 		public S field;
 		public Dictionary<S, K> Method2(string a) { return null; }
 		public K Property2 { get { return default(K); } set { } }
+	}
+
+	public struct TEST_OPERATOR
+	{
+		public static bool operator < (TEST_OPERATOR lhs, TEST_OPERATOR rhs)
+		{
+			return false;
+		}
+		
+		public static bool operator > (TEST_OPERATOR lhs, TEST_OPERATOR rhs){
+			return false;
+		}
+		
+		public static bool operator == (TEST_OPERATOR lhs, TEST_OPERATOR rhs){
+			return true;
+		}
+		
+		public static bool operator != (TEST_OPERATOR lhs, TEST_OPERATOR rhs){
+			return false;
+		}
+		
+		public override string ToString ()
+		{
+			return String.Empty;
+		}
+		
+		public override bool Equals (object other)
+		{
+			if (!(other is TEST_OPERATOR)){
+				return false;
+			}
+			return true;
+		}
+		
+		public override int GetHashCode ()
+		{
+			return 0;
+		}
+	}
+
+	public static class TEST_THIS
+	{
+		public class TEST
+		{
+		}
+		public static void TEST_THIS_METHOD(this TEST t, int a) { }
+	}
+
+	public static class TEST_HIDE
+	{
+		public class BASE
+		{
+			public void Foo() {}
+		}
+
+		public class DERIVED : BASE
+		{
+			public new void Foo() {}
+		}
 	}
 }
 

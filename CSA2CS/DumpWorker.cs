@@ -24,13 +24,20 @@ namespace CSA2CS
 			}
 			if (Directory.Exists(outputRootPath))
 			{
-				var entries = Directory.EnumerateFileSystemEntries(outputRootPath);
-				using (var enumerator = entries.GetEnumerator())
+				if (Global.CLEAR_OUTPUT_PATH_IF_EXIST)
 				{
-					if (enumerator.MoveNext())
+					Directory.Delete(outputRootPath, true);
+				}
+				else
+				{
+					var entries = Directory.EnumerateFileSystemEntries(outputRootPath);
+					using (var enumerator = entries.GetEnumerator())
 					{
-						err = "Output directory is NOT empty!";
-						return false;
+						if (enumerator.MoveNext())
+						{
+							err = "Output directory is NOT empty!";
+							return false;
+						}
 					}
 				}
 			}

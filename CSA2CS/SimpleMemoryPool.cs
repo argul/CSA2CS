@@ -5,14 +5,14 @@ namespace CSA2CS
 {
 	public class SimpleMemoryPool
 	{
-		public void RegisterCreator(Func<string, IPoolUser> creator)
+		public void RegisterCreator(string token, Func<IPoolUser> creator)
 		{
-			this.creator = creator;
+			creators.Add(token, creator);
 		}
 
-		public void Spawn(string token)
+		public IPoolUser Spawn(string token)
 		{
-			DoSpawn(token);
+			return DoSpawn(token);
 		}
 
 		public void Recycle(IPoolUser obj)
@@ -21,7 +21,7 @@ namespace CSA2CS
 		}
 
 		protected Dictionary<string, Stack<IPoolUser>> pool = new Dictionary<string, Stack<IPoolUser>>();
-		protected Func<string, IPoolUser> creator;
+		protected Dictionary<string, Func<IPoolUser>> creators = new Dictionary<string, Func<IPoolUser>>();
 		protected IPoolUser DoSpawn(string token)
 		{
 			Stack<IPoolUser> stack = null;
@@ -50,7 +50,8 @@ namespace CSA2CS
 
 		protected IPoolUser DoCreate(string token)
 		{
-			return creator.Invoke(token);
+			Assert.AssertIsTrue(creators.ContainsKey(token));
+			return creators[token].Invoke();
 		}
 	}
 }

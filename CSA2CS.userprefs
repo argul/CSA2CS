@@ -1,15 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="CSA2CS/PropertyDumper.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="CSA2CS/MethodDumper.cs">
     <Files>
-      <File FileName="CSA2CS/TypeMetaHelper.cs" Line="75" Column="4" />
-      <File FileName="CSA2CS/PropertyDumper.cs" Line="41" Column="14" />
+      <File FileName="CSA2CS/MethodDumper.cs" Line="55" Column="61" />
+      <File FileName="CSA2CS/TEST.cs" Line="228" Column="57" />
+      <File FileName="CSA2CS/Consts.cs" Line="4" Column="2" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="CSA2CS" expanded="True">
-            <Node name="PropertyDumper.cs" selected="True" />
+            <Node name="MethodDumper.cs" selected="True" />
           </Node>
         </State>
       </Pad>
