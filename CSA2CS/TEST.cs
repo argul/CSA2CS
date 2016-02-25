@@ -79,7 +79,7 @@ namespace CSA2CS.TEST
 		public static int A 
 		{ 
 			get { return 0; }
-			set { }
+			private set { }
 		}
 
 		public int B
@@ -200,6 +200,9 @@ namespace CSA2CS.TEST
 		public static bool operator != (TEST_OPERATOR lhs, TEST_OPERATOR rhs){
 			return false;
 		}
+
+		public int this[int x] { get { return 0; } }
+		public int this[int x, TEST_TRAIT y, TEST_GENERIC2<int, int> z] { get { return 0; } }
 		
 		public override string ToString ()
 		{

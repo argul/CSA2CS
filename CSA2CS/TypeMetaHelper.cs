@@ -21,28 +21,16 @@ namespace CSA2CS
 			return IsDelegateType(info.FieldType);
 		}
 
-		public static bool IsAnonymous(System.Type type)
+		public static bool IsCompilerGenerated(System.Type type)
 		{
 			var attrs = type.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false);
 			return (null != attrs && attrs.Length > 0);
 		}
 
-		public static bool IsAnonymous(FieldInfo info)
+		public static bool IsCompilerGenerated(MemberInfo info)
 		{
 			var attrs = info.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false);
 			return (null != attrs && attrs.Length > 0);
-		}
-
-		public static bool IsAnonymous(MethodInfo info)
-		{
-			var attrs = info.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false);
-			return (null != attrs && attrs.Length > 0);
-		}
-
-		public static bool IsSugerMethod(MethodInfo info)
-		{
-			// TODO
-			return false;
 		}
 
 		public static string GetTypeDeclarationName(System.Type type)

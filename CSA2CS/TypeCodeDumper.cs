@@ -34,7 +34,7 @@ namespace CSA2CS
 			if (PrivacyHelper.IsPublic(ctx.data.Type))
 				ctx.Push(Consts.KEYWORD_PUBLIC);
 			else if (PrivacyHelper.IsProtectedInternal(ctx.data.Type))
-				ctx.Push(Consts.KEYWORD_PROTECTED + Consts.KEYWORD_INTERNAL);
+				ctx.Push(Consts.KEYWORD_PROTECTED_INTERNAL);
 			else if (PrivacyHelper.IsProtected(ctx.data.Type))
 				ctx.Push(Consts.KEYWORD_PROTECTED);
 			else if (PrivacyHelper.IsInternal(ctx.data.Type))

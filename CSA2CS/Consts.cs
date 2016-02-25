@@ -9,6 +9,7 @@ namespace CSA2CS
 		public const string KEYWORD_NAMESPACE = "namespace ";
 		public const string KEYWORD_PUBLIC = "public ";
 		public const string KEYWORD_PROTECTED = "protected ";
+		public const string KEYWORD_PROTECTED_INTERNAL = KEYWORD_PROTECTED + KEYWORD_INTERNAL;
 		public const string KEYWORD_PRIVATE = "private ";
 		public const string KEYWORD_INTERNAL = "internal ";
 		public const string KEYWORD_SEALED = "sealed ";

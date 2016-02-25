@@ -10,7 +10,7 @@ namespace CSA2CS
 		{
 			if (PrivacyHelper.IsPublic(info)) return Consts.KEYWORD_PUBLIC;
 			else if (PrivacyHelper.IsPrivate(info)) return Consts.KEYWORD_PRIVATE;
-			else if (PrivacyHelper.IsProtectedInternal(info)) return Consts.KEYWORD_PROTECTED + Consts.KEYWORD_INTERNAL;
+			else if (PrivacyHelper.IsProtectedInternal(info)) return Consts.KEYWORD_PROTECTED_INTERNAL;
 			else if (PrivacyHelper.IsProtected(info)) return Consts.KEYWORD_PROTECTED;
 			else if (PrivacyHelper.IsInternal(info)) return Consts.KEYWORD_INTERNAL;
 			
