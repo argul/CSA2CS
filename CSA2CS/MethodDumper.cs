@@ -42,6 +42,58 @@ namespace CSA2CS
 
 		public static void DumpMethod(MethodInfo mi, DumpContext ctx, bool isInterface)
 		{
+			var dllImportAttr = mi.GetCustomAttributes(typeof(System.Runtime.InteropServices.DllImportAttribute), false);
+			if (null != dllImportAttr && dllImportAttr.Length > 0)
+			{
+				DumpDllImportMethod(mi, ctx, dllImportAttr);
+			}
+			else
+			{
+				DumpManagedMethod(mi, ctx, isInterface);
+			}
+		}
+
+		private static void DumpDllImportMethod(MethodInfo mi, DumpContext ctx, object[] attrs)
+		{
+			ctx.NewLine();
+			if (attrs.Length > 1)
+			{
+				Debug.Log("Multiple DllImportAttributes : " + mi.Name, Debug.DEBUG_LEVEL_ERROR);
+			}
+			else
+			{
+				//[DllImport("test.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+				var attr = attrs[0] as System.Runtime.InteropServices.DllImportAttribute;
+				ctx.Push("[DllImport(\"");
+				ctx.Push(attr.Value);
+				ctx.Push("\", CharSet = CharSet.");
+				ctx.Push(attr.CharSet.ToString());
+				ctx.Push(", CallingConvention = CallingConvention.");
+				ctx.Push(attr.CallingConvention.ToString());
+				ctx.Push(")]");
+
+				ctx.NewLine();
+				//public static extern int TEST(IntPtr hWnd, String text, String caption, uint type);
+				ctx.Push(Privacy(mi));
+				ctx.Push(Consts.KEYWORD_STATIC);
+				ctx.Push(Consts.KEYWORD_EXTERN);
+				ctx.Push(ReturnTypeStr(mi, ctx));
+				ctx.Push(mi.Name);
+				ctx.Push('(');
+
+				var parameters = mi.GetParameters();
+				for (int i = 0; i < parameters.Length; i++)
+				{
+					MethodParameterDumper.DumpParameter(parameters[i], ctx);
+					if (i < parameters.Length - 1) ctx.Push(", ");
+				}
+
+				ctx.Push(");");
+			}
+		}
+
+		private static void DumpManagedMethod(MethodInfo mi, DumpContext ctx, bool isInterface)
+		{
 			ctx.NewLine();
 			if (!isInterface)
 			{
@@ -65,10 +117,7 @@ namespace CSA2CS
 					outParams.Add(parameters[i]);
 				}
 				MethodParameterDumper.DumpParameter(parameters[i], ctx);
-				if (i < parameters.Length - 1)
-				{
-					ctx.Push(", ");
-				}
+				if (i < parameters.Length - 1) ctx.Push(", ");
 			}
 			
 			ctx.Push(')');
@@ -95,7 +144,7 @@ namespace CSA2CS
 						ctx.Push(");");
 					}
 				}
-
+				
 				if (mi.ReturnType == typeof(System.Collections.IEnumerator))
 				{
 					ctx.NewLine();

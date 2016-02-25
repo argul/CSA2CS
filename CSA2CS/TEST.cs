@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace CSA2CS.TEST
 {
@@ -242,6 +243,12 @@ namespace CSA2CS.TEST
 		{
 			public new void Foo() {}
 		}
+	}
+
+	public static class TEST_NATIVE_INVOKE
+	{
+		[DllImport("test.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+		internal static extern int TEST(IntPtr hWnd, ref String text, String caption, uint type = 0);
 	}
 }
 
