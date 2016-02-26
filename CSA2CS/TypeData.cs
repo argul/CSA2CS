@@ -33,7 +33,6 @@ namespace CSA2CS
 
 		public void InitFull(List<FieldInfo> constants,
 		                     List<System.Type> nestedDelegates,
-		                     List<MethodInfo> specialMethods,
 		                     List<FieldInfo> staticFields,
 		                     List<FieldInfo> instanceFields,
 		                     List<ConstructorInfo> constructors,
@@ -48,7 +47,6 @@ namespace CSA2CS
 		{
 			this.constants = constants;
 			this.nestedDelegates = nestedDelegates;
-			this.specialMethods = specialMethods;
 			this.staticFields = staticFields;
 			this.instanceFields = instanceFields;
 			this.constructors = constructors;
@@ -96,10 +94,6 @@ namespace CSA2CS
 		protected List<FieldInfo> instanceFields;
 		public List<FieldInfo> InstanceFields { get { return instanceFields; } }
 		public bool HasInstanceFields { get { return null != instanceFields; } }
-
-		protected List<MethodInfo> specialMethods;
-		public List<MethodInfo> SpecialMethods { get { return specialMethods; } }
-		public bool HasSpecialMethods { get { return null != specialMethods; } }
 
 		protected List<ConstructorInfo> constructors = new List<ConstructorInfo>();
 		public List<ConstructorInfo> Constructors { get { return constructors; } }

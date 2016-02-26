@@ -40,16 +40,23 @@ namespace CSA2CS
 			return "";
 		}
 
-		public static void DumpMethod(MethodInfo mi, DumpContext ctx, bool isInterface)
+		public static void DumpMethod(MethodInfo mi, DumpContext ctx)
 		{
 			var dllImportAttr = mi.GetCustomAttributes(typeof(System.Runtime.InteropServices.DllImportAttribute), false);
 			if (null != dllImportAttr && dllImportAttr.Length > 0)
 			{
 				DumpDllImportMethod(mi, ctx, dllImportAttr);
 			}
+			else if (IsOperatorMethod(mi))
+			{
+				if (customizedOperDumpers.ContainsKey(mi.Name))
+					customizedOperDumpers[mi.Name].Invoke(mi, ctx);
+				else
+					DumpManagedMethod(mi, ctx);
+			}
 			else
 			{
-				DumpManagedMethod(mi, ctx, isInterface);
+				DumpManagedMethod(mi, ctx);
 			}
 		}
 
@@ -92,8 +99,9 @@ namespace CSA2CS
 			}
 		}
 
-		private static void DumpManagedMethod(MethodInfo mi, DumpContext ctx, bool isInterface)
+		private static void DumpManagedMethod(MethodInfo mi, DumpContext ctx)
 		{
+			bool isInterface = ctx.data.Type.IsInterface;
 			ctx.NewLine();
 			if (!isInterface)
 			{
@@ -101,8 +109,7 @@ namespace CSA2CS
 				ctx.Push(Trait(mi));
 			}
 			ctx.Push(ReturnTypeStr(mi, ctx));
-			ctx.Push(mi.Name);
-			if (mi.IsGenericMethod) DumpGenericTypeArguments(mi, ctx);
+			DumpMethodDeclareName(mi, ctx);
 			ctx.Push('(');
 			bool isExtensionMethod = TraitHelper.IsExtensionMethod(mi);
 			
@@ -160,6 +167,20 @@ namespace CSA2CS
 				
 				ctx.RightBracket();
 			}
+		}
+
+		private static void DumpMethodDeclareName(MethodInfo mi, DumpContext ctx)
+		{
+			if (IsOperatorMethod(mi))
+			{
+				ctx.Push(Consts.KEYWORD_OPERATOR);
+				ctx.Push(operatorMethodNames[mi.Name]);
+				ctx.Push(' ');
+			}
+			else
+				ctx.Push(mi.Name);
+
+			if (mi.IsGenericMethod) DumpGenericTypeArguments(mi, ctx);
 		}
 
 		private static void DumpGenericTypeArguments(MethodInfo mi, DumpContext ctx)
@@ -240,54 +261,91 @@ namespace CSA2CS
 			}
 		}
 
-		public static void DumpSpecialMethod(MethodInfo info, DumpContext ctx)
+		public static bool IsOperatorMethod(MethodInfo mi)
 		{
-			Assert.AssertIsTrue(info.IsSpecialName);
-			ctx.NewLine();
-			ctx.Push(info.Name);
+			return operatorMethodNames.ContainsKey(mi.Name);
 		}
-
-//		private static Dictionary<string, string> overridedOperators = new Dictionary<string, string>()
-//		{
-//			op_Implicit
-//			op_Explicit
-//			op_Addition
-//			op_Subtraction
-//			op_Multiply
-//			op_Division
-//			op_Modulus
-//			op_ExclusiveOr
-//			op_BitwiseAnd
-//			op_BitwiseOr
-//			op_LogicalAnd
-//			op_LogicalOr
-//			op_Assign
-//			op_LeftShift
-//			op_RightShift
-//			op_SignedRightShift
-//			op_UnsignedRightShift
-//			op_Equality
-//			op_GreaterThan
-//			op_LessThan
-//			op_Inequality
-//			op_GreaterThanOrEqual
-//			op_LessThanOrEqual
-//			op_MultiplicationAssignment
-//			op_SubtractionAssignment
-//			op_ExclusiveOrAssignment
-//			op_LeftShiftAssignment
-//			op_ModulusAssignment
-//			op_AdditionAssignment
-//			op_BitwiseAndAssignment
-//			op_BitwiseOrAssignment
-//			op_Comma
-//			op_DivisionAssignment
-//			op_Decrement
-//			op_Increment
-//			op_UnaryNegation
-//			op_UnaryPlus
-//			op_OnesComplement
-//		};
+		private static Dictionary<string, Action<MethodInfo, DumpContext>> customizedOperDumpers = new Dictionary<string, Action<MethodInfo, DumpContext>>()
+		{
+			{ 
+				"op_Implicit", (mi, ctx)=>{
+					ctx.NewLine();
+					ctx.Push(Privacy(mi));
+					ctx.Push(Consts.KEYWORD_STATIC);
+					ctx.Push("implicit ");
+					ctx.Push(Consts.KEYWORD_OPERATOR);
+					ctx.Push(ctx.data.Name);
+					ctx.Push('(');
+					var parameters = mi.GetParameters();
+					Assert.AssertIsTrue(1 == parameters.Length);
+					MethodParameterDumper.DumpParameter(parameters[0], ctx);
+					ctx.Push(')');
+					ctx.Push(" { return default(");
+					ctx.Push(TypeMetaHelper.GetTypeUsageName(parameters[0].ParameterType, ctx));
+					ctx.Push("); }");
+				}
+			},
+			{ 
+				"op_Explicit", (mi, ctx)=>{
+					ctx.NewLine();
+					ctx.Push(Privacy(mi));
+					ctx.Push(Consts.KEYWORD_STATIC);
+					ctx.Push("explicit ");
+					ctx.Push(Consts.KEYWORD_OPERATOR);
+					ctx.Push(ctx.data.Name);
+					ctx.Push('(');
+					var parameters = mi.GetParameters();
+					Assert.AssertIsTrue(1 == parameters.Length);
+					MethodParameterDumper.DumpParameter(parameters[0], ctx);
+					ctx.Push(')');
+					ctx.Push(" { return default(");
+					ctx.Push(ctx.data.Name);
+					ctx.Push("); }");
+				}
+			}
+		};
+		private static Dictionary<string, string> operatorMethodNames = new Dictionary<string, string>()
+		{
+			{ "op_Implicit", "" },
+			{ "op_Explicit", "" },
+			{ "op_Addition", "+" },
+			{ "op_Subtraction", "-" },
+			{ "op_Multiply", "*" },
+			{ "op_Division", "/" },
+			{ "op_Modulus", "%" },
+			{ "op_ExclusiveOr", "^" },
+			{ "op_BitwiseAnd", "&" },
+			{ "op_BitwiseOr", "|" },
+			{ "op_LogicalAnd", "&&" },
+			{ "op_LogicalOr", "||" },
+			{ "op_Assign", "=" },
+			{ "op_LeftShift", "<<" },
+			{ "op_RightShift", ">>" },
+			{ "op_SignedRightShift", ">>" },
+			{ "op_UnsignedRightShift", "<<" },
+			{ "op_Equality", "==" },
+			{ "op_GreaterThan", ">" },
+			{ "op_LessThan", "<" },
+			{ "op_Inequality", "!=" },
+			{ "op_GreaterThanOrEqual", ">=" },
+			{ "op_LessThanOrEqual", "<=" },
+			{ "op_MultiplicationAssignment", "*=" },
+			{ "op_SubtractionAssignment", "-=" },
+			{ "op_ExclusiveOrAssignment", "^=" },
+			{ "op_LeftShiftAssignment", "<<=" },
+			{ "op_RightShiftAssignment", ">>=" },
+			{ "op_ModulusAssignment", "%=" },
+			{ "op_AdditionAssignment", "+=" },
+			{ "op_BitwiseAndAssignment", "&=" },
+			{ "op_BitwiseOrAssignment", "|=" },
+			{ "op_Comma", "," },
+			{ "op_DivisionAssignment", "/=" },
+			{ "op_Decrement", "--" },
+			{ "op_Increment", "++" },
+			{ "op_UnaryNegation", "-" },
+			{ "op_UnaryPlus", "+" },
+			{ "op_OnesComplement", "~" }
+		};
 	}
 }
 

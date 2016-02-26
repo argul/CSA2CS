@@ -78,7 +78,6 @@ namespace CSA2CS
 
 			data.InitFull(GetConstants(fields),
 			              GetNestedDelegates(nestedTypes),
-			              GetSpecialMethods(methods),
 			              GetStaticFields(fields),
 			              GetInstanceFields(fields),
 			              GetConstructors(constructors),
@@ -266,19 +265,11 @@ namespace CSA2CS
 			return ret.Count > 0 ? ret.Clone<PropertyInfo>() : null;
 		}
 
-		private static List<MethodInfo> GetSpecialMethods(MethodInfo[] methods)
+		private static bool IsVisibleMethod(MethodInfo mi)
 		{
-			var ret = methodList;
-			ret.Clear();
-			
-			foreach (var mi in methods)
-			{
-				if (mi.Name == Consts.FINALIZER_METHOD_NAME) continue;
-				if (!TraitHelper.IsSpecialMethod(mi)) continue;
-				ret.Add(mi);
-			}
-
-			return ret.Count > 0 ? ret.Clone<MethodInfo>() : null;
+			if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsCompilerGenerated(mi)) return false;
+			if (TraitHelper.IsSpecialMethod(mi) && !MethodDumper.IsOperatorMethod(mi)) return false;
+			return true;
 		}
 
 		private static List<MethodInfo> GetStaticMethods(MethodInfo[] methods)
@@ -288,8 +279,7 @@ namespace CSA2CS
 
 			foreach (var mi in methods)
 			{
-				if (TraitHelper.IsSpecialMethod(mi)) continue;
-				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsCompilerGenerated(mi)) continue;
+				if (!IsVisibleMethod(mi)) continue;
 				if (mi.IsStatic)
 				{
 					ret.Add(mi);
@@ -307,9 +297,8 @@ namespace CSA2CS
 			
 			foreach (var mi in methods)
 			{
-				if (TraitHelper.IsSpecialMethod(mi)) continue;
+				if (!IsVisibleMethod(mi)) continue;
 				if (mi.IsStatic) continue;
-				if (Global.IGNORE_ANONYMOUS && TypeMetaHelper.IsCompilerGenerated(mi)) continue;
 
 				ret.Add(mi);
 			}

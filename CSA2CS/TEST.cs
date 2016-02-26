@@ -185,6 +185,16 @@ namespace CSA2CS.TEST
 
 	public struct TEST_OPERATOR
 	{
+//		public static implicit operator TEST_OPERATOR(bool value)
+//		{
+//			return false;
+//		}
+
+		public static explicit operator TEST_OPERATOR(bool value)
+		{
+			return default(TEST_OPERATOR);
+		}
+
 		public static bool operator < (TEST_OPERATOR lhs, TEST_OPERATOR rhs)
 		{
 			return false;

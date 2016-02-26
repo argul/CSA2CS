@@ -115,7 +115,6 @@ namespace CSA2CS
 			}
 		}
 
-		
 		private static bool IsBuiltInType(System.Type type)
 		{
 			return !String.IsNullOrEmpty(type.Namespace) && type.Namespace.StartsWith("System");

@@ -34,6 +34,7 @@ namespace CSA2CS
 		public const string KEYWORD_NEW = "new ";
 		public const string KEYWORD_THIS = "this ";
 		public const string KEYWORD_EXTERN = "extern ";
+		public const string KEYWORD_OPERATOR = "operator ";
 
 		public const string FINALIZER_METHOD_NAME = "Finalize";
 	}

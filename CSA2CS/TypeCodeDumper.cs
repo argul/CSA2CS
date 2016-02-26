@@ -79,7 +79,6 @@ namespace CSA2CS
 
 		private static void DumpComposedType(DumpContext ctx)
 		{
-			var type = ctx.data.Type;
 			ctx.NewLine();
 
 			DumpDeclaration(ctx);
@@ -99,7 +98,6 @@ namespace CSA2CS
 
 			DumpConstructors(ctx);
 			DumpFinalizer(ctx);
-			DumpSpecialMethods(ctx);
 			DumpStaticEvents(ctx);
 			DumpStaticProperties(ctx);
 			DumpStaticMethods(ctx);
@@ -107,7 +105,7 @@ namespace CSA2CS
 
 			DumpInstanceEvents(ctx);
 			DumpInstanceProperties(ctx);
-			DumpInstanceMethods(ctx, type.IsInterface);
+			DumpInstanceMethods(ctx);
 			DumpInstanceFields(ctx);
 
 			if (ctx.data.HasNestedType)
@@ -157,17 +155,6 @@ namespace CSA2CS
 			MethodDumper.DumpFinalizer(ctx);
 		}
 
-		private static void DumpSpecialMethods(DumpContext ctx)
-		{
-			if (!ctx.data.HasSpecialMethods) return;
-			ctx.NewLine();
-
-			foreach (var mi in ctx.data.SpecialMethods)
-			{
-				MethodDumper.DumpSpecialMethod(mi, ctx);
-			}
-		}
-
 		private static void DumpStaticEvents(DumpContext ctx)
 		{
 			if (!ctx.data.HasStaticEvents) return;
@@ -197,7 +184,7 @@ namespace CSA2CS
 
 			foreach (var mi in ctx.data.StaticMethods)
 			{
-				MethodDumper.DumpMethod(mi, ctx, false);
+				MethodDumper.DumpMethod(mi, ctx);
 			}
 		}
 
@@ -235,14 +222,14 @@ namespace CSA2CS
 			}
 		}
 		
-		private static void DumpInstanceMethods(DumpContext ctx, bool IsInterface)
+		private static void DumpInstanceMethods(DumpContext ctx)
 		{
 			if (!ctx.data.HasInstanceMethods) return;
 			ctx.NewLine();
 			
 			foreach (var mi in ctx.data.InstanceMethods)
 			{
-				MethodDumper.DumpMethod(mi, ctx, IsInterface);
+				MethodDumper.DumpMethod(mi, ctx);
 			}
 		}
 		
